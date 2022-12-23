@@ -1,4 +1,4 @@
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -6,28 +6,33 @@ import {
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { TypeOrmExceptionFilter } from './API/Middlewares/typeOrmError.middleware';
 
 declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter({
-      logger: true,
-    }),
+    new FastifyAdapter()
   );
+
   app.enableVersioning({
     type: VersioningType.URI,
   });
 
+  app.useGlobalPipes(new ValidationPipe());
+  
   const config = new DocumentBuilder()
     .setTitle('QG')
     .setDescription('A feature rich quiz game')
     .setVersion('1.0')
     .addTag('qg')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
+
+  app.useGlobalFilters(new TypeOrmExceptionFilter())
 
   await app.listen(3000);
 
