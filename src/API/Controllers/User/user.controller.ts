@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Post, Put, Req } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { CreateUserRequest } from 'src/API/Dto/Requests/createUser.request';
 import { UpdateUserRequest } from 'src/API/Dto/Requests/updateUser.request';
 import { UserInfoDto } from 'src/API/Dto/userInfo.dto';
@@ -7,6 +8,7 @@ import { ReadUserDto } from 'src/Infra/Repositories/User/user.dto';
 import { UserService } from 'src/Service/Services/user.service';
 
 @Controller('/user/')
+@ApiBearerAuth()
 export class UserController {
   constructor(private userService:UserService) {}
 

@@ -27,6 +27,7 @@ async function bootstrap() {
     .setDescription('A feature rich quiz game')
     .setVersion('1.0')
     .addTag('qg')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
