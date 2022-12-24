@@ -8,25 +8,25 @@ import { CreateCategoryDto, mapModelToDto, ReadCategoryDto, UpdateCategoryDto } 
 export class CategoryRepo{
     constructor(@InjectRepository(Category) private repo:Repository<Category>){}
 
-    async create(dto:CreateCategoryDto):Promise<ReadCategoryDto>{
+    async create(dto:CreateCategoryDto):Promise<Category>{
         const model = await this.repo.save(dto)
-        return mapModelToDto(model)
+        return model
     }
 
-    async update(id:number, dto:UpdateCategoryDto):Promise<ReadCategoryDto>{
+    async update(id:number, dto:UpdateCategoryDto):Promise<Category>{
         const model = await this.repo.save({
             id,
             ...dto
         })
-        return mapModelToDto(model)
+        return model
     }
 
     async delete(id:number):Promise<void>{
         await this.repo.delete(id)
     }
 
-    async getAll():Promise<ReadCategoryDto[]>{
+    async getAll():Promise<Category[]>{
         const result = await this.repo.find()
-        return (await result).map(r => mapModelToDto(r))
+        return result
     }
 }

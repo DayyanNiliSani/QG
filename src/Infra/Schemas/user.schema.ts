@@ -13,13 +13,16 @@ export const UserSchema = new EntitySchema<User>({
         },
         username:{
             type: String,
+            nullable: false
         },
         password:{
-            type: String
+            type: String,
+            nullable: false
         },
         email:{
             type: String,
-            unique: true
+            unique: true,
+            nullable: false
         },
         isAdmin:{
             type:Boolean,

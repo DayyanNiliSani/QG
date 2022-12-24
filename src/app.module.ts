@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Controllers } from './API/Controllers';
 import { Schemas } from './Infra/Schemas';
 import { Repos } from './Infra/Repositories';
-import { Services } from './Service/Services';
+import { Services } from './Service';
 import * as config from 'config'
 import { AuthMiddleware } from './API/Middlewares/auth.middleware';
 

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CreateUserDto, LoginUserDto, ReadUserDto, UpdateUserDto } from "src/Infra/Repositories/User/user.dto";
+import { CreateUserDto, LoginUserDto, mapModelToDto, ReadUserDto, UpdateUserDto } from "src/Infra/Repositories/User/user.dto";
 import { UserRepo } from "src/Infra/Repositories/User/user.repository";
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken'
@@ -17,7 +17,7 @@ export class UserService{
     async create(dto:CreateUserDto):Promise<ReadUserDto>{
         const salt = await bcrypt.genSalt(10);
         dto.password = await bcrypt.hash(dto.password, salt);
-        return await this.userRepo.create(dto)
+        return mapModelToDto(await this.userRepo.create(dto))
     }
 
     async login(dto: LoginUserDto):Promise<string>{
@@ -35,12 +35,12 @@ export class UserService{
     }
 
     async update(id:number, dto:UpdateUserDto):Promise<ReadUserDto>{
-        return await this.userRepo.update(id, dto)
+        return mapModelToDto(await this.userRepo.update(id, dto))
     }
 
     async find(id:number):Promise<ReadUserDto>{
         const result = await this.userRepo.find(id)
-        return result
+        return mapModelToDto(result)
     }
 
     async delete(id:number):Promise<void>{

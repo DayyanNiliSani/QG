@@ -5,7 +5,6 @@ import { Observable } from "rxjs";
 export class IsAdmin implements CanActivate{
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const req = context.switchToHttp().getRequest<Request>()
-        console.log(req.headers)
         if(!req.headers['X-user-isAdmin']) throw new UnauthorizedException()
         return true
     }

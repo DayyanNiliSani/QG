@@ -8,18 +8,18 @@ import { CreateUserDto, mapModelToDto, ReadUserDto, UpdateUserDto } from "./user
 export class UserRepo{
     constructor(@InjectRepository(User) private repo:Repository<User>){}
 
-    async create(dto: CreateUserDto):Promise<ReadUserDto>{
+    async create(dto: CreateUserDto):Promise<User>{
         const newModel = await this.repo.save(dto);
-        return mapModelToDto(newModel)
+        return newModel
     }
 
-    async find(id:number):Promise<ReadUserDto>{
-        const result = await this.repo.find({
+    async find(id:number):Promise<User>{
+        const result = await this.repo.findOne({
             where:{
                 id:id
             }
         })
-        return mapModelToDto(result[0]);
+        return result
     }
 
     async findByEmail(email:string):Promise<User>{
@@ -30,11 +30,11 @@ export class UserRepo{
         await this.repo.delete(id);
     }
 
-    async update(id:number, dto:UpdateUserDto):Promise<ReadUserDto>{
+    async update(id:number, dto:UpdateUserDto):Promise<User>{
         const model = await this.repo.save({
             id:id,
             ...dto
         })
-        return mapModelToDto(model)
+        return model
     }
 }
