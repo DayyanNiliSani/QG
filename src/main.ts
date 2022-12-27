@@ -7,14 +7,15 @@ import {
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { TypeOrmExceptionFilter } from './API/Middlewares/typeOrmError.middleware';
-
-declare const module: any;
+import { CustomErrorExceptionFilter } from './API/Middlewares/customError.middleware';
+import { Seeds } from './Infra/Seed';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter()
   );
+
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -36,12 +37,14 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
 
   app.useGlobalFilters(new TypeOrmExceptionFilter())
+  app.useGlobalFilters(new CustomErrorExceptionFilter())
 
   await app.listen(3000);
 
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
+  for(var seed of Seeds){
+    try{
+      await app.get(seed).seed()
+    }catch(exp){}
   }
 }
 bootstrap();

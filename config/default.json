@@ -10,5 +10,9 @@
     "jwt":{
         "password":"somePasswordForJWT",
         "expiresIn":"30d"
+    },
+    "redis":{
+        "host":"localhost",
+        "port":6379
     }
 }

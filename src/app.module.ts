@@ -6,8 +6,11 @@ import { Repos } from './Infra/Repositories';
 import { Services } from './Service';
 import * as config from 'config'
 import { AuthMiddleware } from './API/Middlewares/auth.middleware';
+import { BullModule } from '@nestjs/bull';
+import { Seeds } from './Infra/Seed';
 
 const dbConfig = config.get("db")
+const redisConfig = config.get("redis")
 
 @Module({
   imports: [
@@ -17,9 +20,15 @@ const dbConfig = config.get("db")
       autoLoadEntities:true,
     },),
     TypeOrmModule.forFeature(Schemas),
+    BullModule.forRoot({
+      redis:redisConfig
+    }),
+    BullModule.registerQueue({
+      name:"games",
+    })
   ],
   controllers: Controllers,
-  providers: [...Repos, ...Services],
+  providers: [...Repos, ...Services,...Seeds],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

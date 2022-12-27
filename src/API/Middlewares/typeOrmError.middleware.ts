@@ -23,7 +23,7 @@ export class TypeOrmExceptionFilter implements ExceptionFilter{
                 status = HttpStatus.BAD_REQUEST
                 break
         }
-        ctx.getResponse()
+        
         response.status(status).send({
             status: status,
             message: exception.message

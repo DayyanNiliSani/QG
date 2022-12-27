@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from "src/Domain/Entities/category";
 import { Repository } from "typeorm";
-import { CreateCategoryDto, mapModelToDto, ReadCategoryDto, UpdateCategoryDto } from "./category.dto";
+import { CreateCategoryDto, UpdateCategoryDto } from "./category.dto";
 
 @Injectable()
 export class CategoryRepo{
@@ -28,5 +28,14 @@ export class CategoryRepo{
     async getAll():Promise<Category[]>{
         const result = await this.repo.find()
         return result
+    }
+
+    async get3Randoms():Promise<Category[]>{
+        const categories = await this.repo.createQueryBuilder('category')
+            .select()
+            .orderBy('RANDOM()')
+            .take(3)
+            .getMany()
+        return categories
     }
 }
