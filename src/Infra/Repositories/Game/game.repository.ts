@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game, GameStatus } from 'src/Domain/Entities/game';
-import { Repository, Not } from 'typeorm';
+import { Repository, Not, LessThan } from 'typeorm';
 
 @Injectable()
 export class GameRepo {
@@ -35,7 +35,6 @@ export class GameRepo {
           user1: {
             id: userId,
           },
-          status: Not(GameStatus.Ended),
         },
         {
           user2: {
@@ -53,12 +52,14 @@ export class GameRepo {
             id: userId,
           },
           status: Not(GameStatus.Ended),
+          updated: LessThan(Date.now() - 1000 * 60 * 60 * 24),
         },
         {
           user2: {
             id: userId,
           },
           status: Not(GameStatus.Ended),
+          updated: LessThan(Date.now() - 1000 * 60 * 60 * 24),
         },
       ],
     });

@@ -9,22 +9,31 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { TypeOrmExceptionFilter } from './API/Middlewares/typeOrmError.middleware';
 import { CustomErrorExceptionFilter } from './API/Middlewares/customError.middleware';
 import { Seeds } from './Infra/Seed';
+import fastifyCsrf from '@fastify/csrf-protection';
+import helmet from '@fastify/helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter()
+    new FastifyAdapter(),
+    {
+      cors: true,
+    },
   );
-
-
+  
+  await app.register(fastifyCsrf);
+  await app.register(helmet);
+  
   app.enableVersioning({
     type: VersioningType.URI,
   });
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true
-  }));
-  
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
+
   const config = new DocumentBuilder()
     .setTitle('QG')
     .setDescription('A feature rich quiz game')
@@ -36,15 +45,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
-  app.useGlobalFilters(new TypeOrmExceptionFilter())
-  app.useGlobalFilters(new CustomErrorExceptionFilter())
+  app.useGlobalFilters(new TypeOrmExceptionFilter());
+  app.useGlobalFilters(new CustomErrorExceptionFilter());
 
   await app.listen(3000);
 
-  for(var seed of Seeds){
-    try{
-      await app.get(seed).seed()
-    }catch(exp){}
+  for (var seed of Seeds) {
+    try {
+      await app.get(seed).seed();
+    } catch (exp) {}
   }
 }
 bootstrap();
