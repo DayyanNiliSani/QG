@@ -1,5 +1,5 @@
 import { Question } from "src/Domain/Entities/question";
-import { EntitySchema, TableForeignKey } from "typeorm";
+import { EntitySchema } from "typeorm";
 
 export const QuestionSchema = new EntitySchema<Question>({
     name:'Question',
@@ -53,7 +53,7 @@ export const QuestionSchema = new EntitySchema<Question>({
             target:'User',
             cascade: true,
             inverseSide:'Question',
-            nullable: false
+            nullable: false,
         },
     },
 })

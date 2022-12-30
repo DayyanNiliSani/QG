@@ -30,7 +30,7 @@ export class CategoryRepo{
         return result
     }
 
-    async get3Randoms():Promise<Category[]>{
+    async getRandomCats():Promise<Category[]>{
         const categories = await this.repo.createQueryBuilder('category')
             .select()
             .orderBy('RANDOM()')

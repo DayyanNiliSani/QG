@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Question } from "src/Domain/Entities/question";
+import { User } from "src/Domain/Entities/user";
 import { Repository } from "typeorm";
 import { CreateQuestionDto, UpdateQuestionDto } from "./question.dto";
 
@@ -98,6 +99,39 @@ export class QuestionRepo{
             skip,
             take
         })
+    }
+
+    async getRandomQuestions(categoryId:number):Promise<Question[]>{
+
+        const rawData = await this.repo.createQueryBuilder('question')
+            .innerJoinAndSelect('question.author','author')
+            .where('question."categoryId" = :categoryId', {categoryId})
+            .orderBy('RANDOM()')
+            .limit(3)
+            .getRawMany()
+
+        const result = rawData.map(data => {
+            const question = new Question()
+            const author = new User()
+
+            author.email = data.author_email
+            author.id = data.author_id
+            author.isAdmin = data.author_isAdmin
+            author.username = data.author_username
+            
+            question.author = author
+            question.id = data.question_id
+            question.answer1 = data.question_answer1
+            question.answer2 = data.question_answer2
+            question.answer3 = data.question_answer3
+            question.answer4 = data.question_answer4
+            question.question = data.question_question
+            question.isConfirmed = data.question_isConfirmed
+
+            return question
+        })
+
+        return result
     }
 
     async delete(question:Question):Promise<void>{
