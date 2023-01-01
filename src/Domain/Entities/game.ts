@@ -41,7 +41,7 @@ export class Game {
   }
 
   isItThisPlayerTurn(userId): boolean {
-    var player1Turn = true;
+    let player1Turn = true;
     if (
       this.status == GameStatus.User1AnsweredQues1 ||
       this.status == GameStatus.User2AnsweredQues1 ||
@@ -63,7 +63,7 @@ export class Game {
   }
 
   checkIsItTurnOfPlayer(userId: number) {
-    var player1Turn = true;
+    let player1Turn = true;
     if (
       this.status == GameStatus.User1AnsweredQues1 ||
       this.status == GameStatus.User2AnsweredQues1 ||

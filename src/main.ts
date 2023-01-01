@@ -51,7 +51,7 @@ async function bootstrap() {
 
   await apiApp.listen(3000);
 
-  for (var seed of Seeds) {
+  for (let seed of Seeds) {
     try {
       await apiApp.get(seed).seed();
     } catch (exp) {}

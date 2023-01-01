@@ -35,14 +35,20 @@ export class GameService {
     @InjectQueue('games') private gameQueue: Queue,
   ) {}
 
-  public async startGame(userId: number, username:string): Promise<ReadGameDto> {
+  public async startGame(
+    userId: number,
+    username: string,
+  ): Promise<ReadGameDto> {
     if ((await this.gameRepo.findUserActiveGames(userId)) > 5)
       throw new TooManyGamesError();
-    var game: Game;
-    const lock = await this.redLockInstance.instance.acquire(['startGameLock'], 5000)
+    let game: Game;
+    const lock = await this.redLockInstance.instance.acquire(
+      ['startGameLock'],
+      5000,
+    );
     const gameJob = (await this.gameQueue.getNextJob()) as Job<Game>;
     if (!gameJob) {
-      await lock.release()
+      await lock.release();
       game = await this.gameRepo.create(userId, username);
       this.gameQueue.add(game);
     } else {
@@ -54,7 +60,7 @@ export class GameService {
         await this.gameRepo.saveChanges(game);
         this.rabbitMQClient.sendEventForUser(game.getOtherUserId(userId), game);
       }
-      await lock.release()
+      await lock.release();
     }
     return mapModelToDto(game);
   }
