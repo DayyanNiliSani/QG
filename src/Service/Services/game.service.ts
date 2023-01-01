@@ -6,6 +6,7 @@ import { TooManyGamesError } from 'src/Domain/Common/Exception/tooManyGames';
 import { Game } from 'src/Domain/Entities/game';
 import { User } from 'src/Domain/Entities/user';
 import { RabbitMQClient } from 'src/Infra/BrokerClient/rabbitMQ.client';
+import { RedLockInstance } from 'src/Infra/Lock/redLock';
 import {
   ReadCategoryDto,
   mapModelToDto as mapCategoryModelToDto,
@@ -30,6 +31,7 @@ export class GameService {
     private gameRepo: GameRepo,
     private questionRepo: QuestionRepo,
     private rabbitMQClient: RabbitMQClient,
+    private redLockInstance: RedLockInstance,
     @InjectQueue('games') private gameQueue: Queue,
   ) {}
 
@@ -37,8 +39,10 @@ export class GameService {
     if ((await this.gameRepo.findUserActiveGames(userId)) > 5)
       throw new TooManyGamesError();
     var game: Game;
+    const lock = await this.redLockInstance.instance.acquire(['startGameLock'], 5000)
     const gameJob = (await this.gameQueue.getNextJob()) as Job<Game>;
     if (!gameJob) {
+      await lock.release()
       game = await this.gameRepo.create(userId, username);
       this.gameQueue.add(game);
     } else {
@@ -50,6 +54,7 @@ export class GameService {
         await this.gameRepo.saveChanges(game);
         this.rabbitMQClient.sendEventForUser(game.getOtherUserId(userId), game);
       }
+      await lock.release()
     }
     return mapModelToDto(game);
   }

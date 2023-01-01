@@ -14,5 +14,8 @@
     "redis":{
         "host":"localhost",
         "port":6379
+    },
+    "rabbitMQ":{
+        "host":"amqp://localhost"
     }
 }

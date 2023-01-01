@@ -12,6 +12,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RabbitMQClient } from './Infra/BrokerClient/rabbitMQ.client';
+import { RedLockInstance } from './Infra/Lock/redLock';
 
 const dbConfig = config.get('db');
 const redisConfig = config.get('redis');
@@ -54,6 +55,7 @@ const redisConfig = config.get('redis');
     ...Services,
     ...Seeds,
     RabbitMQClient,
+    RedLockInstance,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
