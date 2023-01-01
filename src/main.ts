@@ -6,29 +6,30 @@ import {
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { TypeOrmExceptionFilter } from './API/Middlewares/typeOrmError.middleware';
-import { CustomErrorExceptionFilter } from './API/Middlewares/customError.middleware';
+import { TypeOrmExceptionFilter } from './App/Middlewares/typeOrmError.middleware';
+import { CustomErrorExceptionFilter } from './App/Middlewares/customError.middleware';
 import { Seeds } from './Infra/Seed';
 import fastifyCsrf from '@fastify/csrf-protection';
 import helmet from '@fastify/helmet';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
+  const apiApp = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
     {
       cors: true,
     },
   );
-  
-  await app.register(fastifyCsrf);
-  await app.register(helmet);
-  
-  app.enableVersioning({
+
+  await apiApp.register(fastifyCsrf);
+  await apiApp.register(helmet);
+
+  apiApp.enableVersioning({
     type: VersioningType.URI,
   });
 
-  app.useGlobalPipes(
+  apiApp.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
     }),
@@ -42,17 +43,17 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  const document = SwaggerModule.createDocument(apiApp, config);
+  SwaggerModule.setup('swagger', apiApp, document);
 
-  app.useGlobalFilters(new TypeOrmExceptionFilter());
-  app.useGlobalFilters(new CustomErrorExceptionFilter());
+  apiApp.useGlobalFilters(new TypeOrmExceptionFilter());
+  apiApp.useGlobalFilters(new CustomErrorExceptionFilter());
 
-  await app.listen(3000);
+  await apiApp.listen(3000);
 
   for (var seed of Seeds) {
     try {
-      await app.get(seed).seed();
+      await apiApp.get(seed).seed();
     } catch (exp) {}
   }
 }

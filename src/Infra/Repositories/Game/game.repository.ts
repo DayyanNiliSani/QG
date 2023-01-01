@@ -7,12 +7,13 @@ import { Repository, Not, LessThan } from 'typeorm';
 export class GameRepo {
   constructor(@InjectRepository(Game) private repo: Repository<Game>) {}
 
-  public async create(user1: number): Promise<Game> {
+  public async create(user1: number, user1Username: string): Promise<Game> {
     const model = await this.repo.save({
       status: GameStatus.Started,
       updated: Date.now(),
       user1: {
         id: user1,
+        username: user1Username,
       },
     });
 

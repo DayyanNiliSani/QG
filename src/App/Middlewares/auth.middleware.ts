@@ -22,6 +22,7 @@ export class AuthMiddleware implements NestMiddleware {
         const decoded: any = jwt.verify(token, config.get("jwt.password"));
         req.headers['X-user-id'] = decoded.id
         req.headers['X-user-isAdmin'] = decoded.isAdmin
+        req.headers['X-user-username'] = decoded.username
     } catch (err) {
         throw new UnauthorizedException()
     }finally{

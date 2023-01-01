@@ -1,9 +1,11 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Client, ClientProxy } from '@nestjs/microservices';
 import { Job, Queue } from 'bull';
 import { TooManyGamesError } from 'src/Domain/Common/Exception/tooManyGames';
 import { Game } from 'src/Domain/Entities/game';
 import { User } from 'src/Domain/Entities/user';
+import { RabbitMQClient } from 'src/Infra/BrokerClient/rabbitMQ.client';
 import {
   ReadCategoryDto,
   mapModelToDto as mapCategoryModelToDto,
@@ -27,24 +29,26 @@ export class GameService {
     private categoryRepo: CategoryRepo,
     private gameRepo: GameRepo,
     private questionRepo: QuestionRepo,
+    private rabbitMQClient: RabbitMQClient,
     @InjectQueue('games') private gameQueue: Queue,
   ) {}
 
-  public async startGame(userId: number): Promise<ReadGameDto> {
+  public async startGame(userId: number, username:string): Promise<ReadGameDto> {
     if ((await this.gameRepo.findUserActiveGames(userId)) > 5)
       throw new TooManyGamesError();
     var game: Game;
     const gameJob = (await this.gameQueue.getNextJob()) as Job<Game>;
     if (!gameJob) {
-      game = await this.gameRepo.create(userId);
+      game = await this.gameRepo.create(userId, username);
       this.gameQueue.add(game);
     } else {
       game = this.parseGameFromQueueData(gameJob);
-      if (!game.joinPlayer2(userId)) {
+      if (!game.joinPlayer2(userId, username)) {
         this.gameQueue.add(game);
-        game = await this.gameRepo.create(userId);
+        game = await this.gameRepo.create(userId, username);
       } else {
         await this.gameRepo.saveChanges(game);
+        this.rabbitMQClient.sendEventForUser(game.getOtherUserId(userId), game);
       }
     }
     return mapModelToDto(game);
@@ -98,6 +102,7 @@ export class GameService {
     });
     game.updateStatus();
     this.gameRepo.saveChanges(game);
+    this.rabbitMQClient.sendEventForUser(game.getOtherUserId(userId), game);
     return mapModelToDto(game);
   }
 

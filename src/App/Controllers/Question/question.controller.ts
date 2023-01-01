@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
-import { CreateQuestionRequest } from 'src/API/Dto/Requests/createQuestion.request';
-import { UpdateQuestionRequest } from 'src/API/Dto/Requests/updateQuestion.request';
-import { GetQuestionResponse as GetQuestionsResponse } from 'src/API/Dto/Responses/getQuestions.response';
-import { UserInfoDto } from 'src/API/Dto/userInfo.dto';
-import { UserInfo } from 'src/API/Middlewares/decorators/userInfo.decorator';
-import { IsAdmin } from 'src/API/Middlewares/guards/isAdmin.guard';
+import { CreateQuestionRequest } from 'src/App/Dto/Requests/createQuestion.request';
+import { UpdateQuestionRequest } from 'src/App/Dto/Requests/updateQuestion.request';
+import { GetQuestionResponse as GetQuestionsResponse } from 'src/App/Dto/Responses/getQuestions.response';
+import { UserInfoDto } from 'src/App/Dto/userInfo.dto';
+import { UserInfo } from 'src/App/Middlewares/decorators/userInfo.decorator';
+import { IsAdmin } from 'src/App/Middlewares/guards/isAdmin.guard';
 import { ReadQuestionDto } from 'src/Infra/Repositories/Question/question.dto';
 import { QuestionService } from 'src/Service/Services/question.service';
 

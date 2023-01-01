@@ -20,11 +20,17 @@ export class Game {
   categories: GameCategory[];
   questions: GameQuestion[];
 
-  joinPlayer2(user2Id: number): boolean {
+  joinPlayer2(user2Id: number, user2Username: string): boolean {
     if (this.user1.id == user2Id) return false;
     this.user2 = new User();
     this.user2.id = user2Id;
+    this.user2.username = user2Username;
     return true;
+  }
+
+  getOtherUserId(userId: number): number {
+    if (this.user1.id == userId) return this.user2.id;
+    return this.user1.id;
   }
 
   setSuggestedCategories(cats: Category[]) {

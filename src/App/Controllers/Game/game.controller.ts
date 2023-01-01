@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { ListOfRegisterAnswersRequest } from 'src/API/Dto/Requests/registerAnswerList.request';
-import { UserInfoDto } from 'src/API/Dto/userInfo.dto';
-import { UserInfo } from 'src/API/Middlewares/decorators/userInfo.decorator';
+import { ListOfRegisterAnswersRequest } from 'src/App/Dto/Requests/registerAnswerList.request';
+import { UserInfoDto } from 'src/App/Dto/userInfo.dto';
+import { UserInfo } from 'src/App/Middlewares/decorators/userInfo.decorator';
 import { ReadCategoryDto } from 'src/Infra/Repositories/Category/category.dto';
 import { ReadGameDto } from 'src/Infra/Repositories/Game/game.dto';
 import { ReadQuestionDto } from 'src/Infra/Repositories/Question/question.dto';

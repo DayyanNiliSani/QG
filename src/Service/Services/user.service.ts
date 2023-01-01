@@ -4,6 +4,7 @@ import { UserRepo } from "src/Infra/Repositories/User/user.repository";
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken'
 import * as config from 'config'
+import { RabbitMQClient } from "src/Infra/BrokerClient/rabbitMQ.client";
 
 const jwtConfig = config.get("jwt") as {
     password: string,
@@ -12,12 +13,14 @@ const jwtConfig = config.get("jwt") as {
 
 @Injectable()
 export class UserService{
-    constructor(private userRepo:UserRepo){}
+    constructor(private userRepo:UserRepo, private rabbitMQClient:RabbitMQClient){}
 
     async create(dto:CreateUserDto):Promise<ReadUserDto>{
         const salt = await bcrypt.genSalt(10);
         dto.password = await bcrypt.hash(dto.password, salt);
-        return mapModelToDto(await this.userRepo.create(dto))
+        const user = await this.userRepo.create(dto);
+        this.rabbitMQClient.createUserForBroker(user.id, user.email, dto.password)
+        return mapModelToDto(user)
     }
 
     async login(dto: LoginUserDto):Promise<string>{
@@ -27,7 +30,8 @@ export class UserService{
         if(!passwordCheck){}
         const token = await jwt.sign({
             id: user.id,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
+            username: user.username
         },jwtConfig.password,{
             expiresIn:jwtConfig.expiresIn
         })

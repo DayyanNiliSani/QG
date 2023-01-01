@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Observable } from "rxjs";
-import { UnauthenticatedError } from "src/API/Common/Errors/unauthenticated";
+import { UnauthenticatedError } from "src/App/Common/Errors/unauthenticated";
 
 @Injectable()
 export class IsLogin implements CanActivate{
