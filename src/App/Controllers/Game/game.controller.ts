@@ -13,9 +13,9 @@ import { GameService } from 'src/Service/Services/game.service';
 export class GameController {
   constructor(private gameService: GameService) {}
 
-  @Post('/:id')
-  async start(@Param('id') id: number): Promise<ReadGameDto> {
-    return await this.gameService.startGame(id);
+  @Post('/')
+  async start(@UserInfo() userInfo: UserInfoDto): Promise<ReadGameDto> {
+    return await this.gameService.startGame(userInfo.id, userInfo.username);
   }
 
   @Get('/:gameId/categories')
@@ -60,10 +60,8 @@ export class GameController {
     return await this.gameService.getGame(userInfo.id, gameId);
   }
 
-  @Get("/")
-  async getGames(
-    @UserInfo() userInfo:UserInfoDto
-  ){
-    return await this.gameService.getGames(userInfo.id)
+  @Get('/')
+  async getGames(@UserInfo() userInfo: UserInfoDto) {
+    return await this.gameService.getGames(userInfo.id);
   }
 }
