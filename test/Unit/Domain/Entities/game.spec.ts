@@ -72,17 +72,11 @@ describe('GameEntity', () => {
     game.suggestedCat3.id = 3;
     game.suggestedCat3.title = 'music';
 
-    expect(
-      game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(2),
-    ).toBeUndefined();
+    expect(game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(2)).toBeUndefined();
 
-    expect(
-      game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(1),
-    ).toBeUndefined();
+    expect(game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(1)).toBeUndefined();
 
-    expect(
-      game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(3),
-    ).toBeUndefined();
+    expect(game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(3)).toBeUndefined();
   });
 
   test('Category Invalid Selection', () => {
@@ -98,16 +92,10 @@ describe('GameEntity', () => {
     game.suggestedCat3.id = 3;
     game.suggestedCat3.title = 'music';
 
-    expect(() =>
-      game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(4),
-    ).toThrowError(BaseError);
+    expect(() => game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(4)).toThrowError(BaseError);
 
-    expect(() =>
-      game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(0),
-    ).toThrowError(BaseError);
+    expect(() => game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(0)).toThrowError(BaseError);
 
-    expect(() =>
-      game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(-1),
-    ).toThrowError(BaseError);
+    expect(() => game.checkIsTheSelectedCategoryOneOfTheSuggestedOnes(-1)).toThrowError(BaseError);
   });
 });

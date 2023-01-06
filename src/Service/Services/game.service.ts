@@ -1,26 +1,16 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Client, ClientProxy } from '@nestjs/microservices';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Job, Queue } from 'bull';
 import { TooManyGamesError } from 'src/Domain/Common/Exception/tooManyGames';
 import { Game } from 'src/Domain/Entities/game';
 import { User } from 'src/Domain/Entities/user';
 import { RabbitMQClient } from 'src/Infra/BrokerClient/rabbitMQ.client';
 import { RedLockInstance } from 'src/Infra/Lock/redLock';
-import {
-  ReadCategoryDto,
-  mapModelToDto as mapCategoryModelToDto,
-} from 'src/Infra/Repositories/Category/category.dto';
+import { ReadCategoryDto, mapModelToDto as mapCategoryModelToDto } from 'src/Infra/Repositories/Category/category.dto';
 import { CategoryRepo } from 'src/Infra/Repositories/Category/category.repository';
-import {
-  mapModelToDto,
-  ReadGameDto,
-} from 'src/Infra/Repositories/Game/game.dto';
+import { mapModelToDto, ReadGameDto } from 'src/Infra/Repositories/Game/game.dto';
 import { GameRepo } from 'src/Infra/Repositories/Game/game.repository';
-import {
-  ReadQuestionDto,
-  mapModelToDto as mapQuestionModelToDto,
-} from 'src/Infra/Repositories/Question/question.dto';
+import { ReadQuestionDto, mapModelToDto as mapQuestionModelToDto } from 'src/Infra/Repositories/Question/question.dto';
 import { QuestionRepo } from 'src/Infra/Repositories/Question/question.repository';
 import { RegisterAnswerDto } from '../Dto/registerAnswerDto';
 
@@ -35,40 +25,43 @@ export class GameService {
     @InjectQueue('games') private gameQueue: Queue,
   ) {}
 
-  public async startGame(
-    userId: number,
-    username: string,
-  ): Promise<ReadGameDto> {
-    if ((await this.gameRepo.findUserActiveGames(userId)) > 5)
-      throw new TooManyGamesError();
+  public async startGame(userId: number, username: string): Promise<ReadGameDto> {
+    const lock = await this.redLockInstance.instance.acquire(['startGameLock'], 1000);
+    if ((await this.gameRepo.findUserActiveGames(userId)) > 5) throw new TooManyGamesError();
+    const queueLength = await this.gameQueue.count();
+    let numberOfIterationsOnQueue = 0;
     let game: Game;
-    const lock = await this.redLockInstance.instance.acquire(
-      ['startGameLock'],
-      5000,
-    );
-    const gameJob = (await this.gameQueue.getNextJob()) as Job<Game>;
-    if (!gameJob) {
-      await lock.release();
-      game = await this.gameRepo.create(userId, username);
-      this.gameQueue.add(game);
-    } else {
-      game = this.parseGameFromQueueData(gameJob);
-      if (!game.joinPlayer2(userId, username)) {
-        this.gameQueue.add(game);
+    while (true) {
+      const gameJob = (await this.gameQueue.getNextJob()) as Job<Game>;
+      if (!gameJob) {
         game = await this.gameRepo.create(userId, username);
+        this.gameQueue.add(game);
+        lock.unlock((err, value) => {});
+        break;
       } else {
-        await this.gameRepo.saveChanges(game);
-        this.rabbitMQClient.sendEventForUser(game.getOtherUserId(userId), game);
+        game = this.parseGameFromQueueData(gameJob);
+        if (numberOfIterationsOnQueue < queueLength) {
+          if (!game.joinPlayer2(userId, username)) {
+            this.gameQueue.add(game);
+          } else {
+            await this.gameRepo.saveChanges(game);
+            this.rabbitMQClient.sendEventForUser(game.getOtherUserId(userId), game);
+            lock.unlock((err, value) => {});
+            break;
+          }
+          numberOfIterationsOnQueue++;
+        } else {
+          game = await this.gameRepo.create(userId, username);
+          this.gameQueue.add(game);
+          lock.unlock((err, value) => {});
+          break;
+        }
       }
-      await lock.release();
     }
     return mapModelToDto(game);
   }
 
-  public async getRandomCategories(
-    userId: number,
-    gameId: number,
-  ): Promise<ReadCategoryDto[]> {
+  public async getRandomCategories(userId: number, gameId: number): Promise<ReadCategoryDto[]> {
     const game = await this.gameRepo.findOne(gameId);
     if (!game) throw new NotFoundException();
     game.checkIsThisPlayerPartOfGame(userId);
@@ -98,11 +91,7 @@ export class GameService {
     return questions.map((q) => mapQuestionModelToDto(q));
   }
 
-  public async registerUserAnswers(
-    userId: number,
-    gameId: number,
-    answers: RegisterAnswerDto[],
-  ): Promise<ReadGameDto> {
+  public async registerUserAnswers(userId: number, gameId: number, answers: RegisterAnswerDto[]): Promise<ReadGameDto> {
     const game = await this.gameRepo.findOne(gameId);
     if (!game) throw new NotFoundException();
     game.checkIsThisPlayerPartOfGame(userId);
@@ -145,6 +134,7 @@ export class GameService {
     game.user1 = new User();
     game.id = job.data.id;
     game.user1.id = job.data.user1.id;
+    game.user1.username = job.data.user1.username;
     game.status = job.data.status;
     game.updated = job.data.update;
     return game;

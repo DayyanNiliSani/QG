@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as config from 'config';
 import Client from 'ioredis';
-import Redlock from 'redlock';
+import * as Redlock from 'redlock';
 
 @Injectable()
 export class RedLockInstance {
@@ -15,6 +15,6 @@ export class RedLockInstance {
       ...redisConfig,
     });
 
-    this.instance = new Redlock([redisConnection]);
+    this.instance = new Redlock([redisConnection] as any);
   }
 }

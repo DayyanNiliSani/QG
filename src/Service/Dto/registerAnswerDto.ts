@@ -1,4 +1,4 @@
-export interface RegisterAnswerDto{
-    questionId:number,
-    selectedAnswer:number
+export interface RegisterAnswerDto {
+  questionId: number;
+  selectedAnswer: number;
 }

@@ -57,8 +57,7 @@ export class Game {
   }
 
   checkIsThisPlayerPartOfGame(userId: number) {
-    if (this.user1.id == userId || (this.user2 && this.user2.id == userId))
-      return;
+    if (this.user1.id == userId || (this.user2 && this.user2.id == userId)) return;
     throw new InvalidPlayerId();
   }
 

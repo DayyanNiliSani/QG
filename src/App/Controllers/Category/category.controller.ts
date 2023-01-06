@@ -13,30 +13,30 @@ export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Get('')
-  async getAll():Promise<GetAllCategoryResponse> {
-    const result = await this.categoryService.getAll()
+  async getAll(): Promise<GetAllCategoryResponse> {
+    const result = await this.categoryService.getAll();
     return {
-        categories: result
-    } 
+      categories: result,
+    };
   }
 
   @Post('')
   @HttpCode(201)
   @UseGuards(IsAdmin)
-  async create(@Body() body: CreateCategoryRequest):Promise<ReadCategoryDto>{
-    return this.categoryService.create(body)
+  async create(@Body() body: CreateCategoryRequest): Promise<ReadCategoryDto> {
+    return this.categoryService.create(body);
   }
 
   @Put('/:id')
   @UseGuards(IsAdmin)
-  async update(@Body() body: UpdateCategoryRequest, @Param("id") id:string):Promise<ReadCategoryDto>{
-    return await this.categoryService.update(+id, body)
+  async update(@Body() body: UpdateCategoryRequest, @Param('id') id: string): Promise<ReadCategoryDto> {
+    return await this.categoryService.update(+id, body);
   }
 
   @Delete('/:id')
   @HttpCode(204)
   @UseGuards(IsAdmin)
-  async delete(@Param("id") id:string):Promise<void>{
-    return await this.categoryService.delete(+id)
+  async delete(@Param('id') id: string): Promise<void> {
+    return await this.categoryService.delete(+id);
   }
 }

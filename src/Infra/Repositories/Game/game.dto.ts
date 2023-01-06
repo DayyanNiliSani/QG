@@ -1,16 +1,7 @@
 import { Game } from 'src/Domain/Entities/game';
-import {
-  ReadCategoryDto,
-  mapModelToDto as mapCategoryModelToDto,
-} from '../Category/category.dto';
-import {
-  ReadQuestionDto,
-  mapModelToDto as mapQuestionModelToDto,
-} from '../Question/question.dto';
-import {
-  ReadUserDto,
-  mapModelToDto as mapUserModelToDto,
-} from '../User/user.dto';
+import { ReadCategoryDto, mapModelToDto as mapCategoryModelToDto } from '../Category/category.dto';
+import { ReadQuestionDto, mapModelToDto as mapQuestionModelToDto } from '../Question/question.dto';
+import { ReadUserDto, mapModelToDto as mapUserModelToDto } from '../User/user.dto';
 
 export interface ReadGameDto {
   id: number;
@@ -38,18 +29,10 @@ export function mapModelToDto(model: Game): ReadGameDto {
     updated: model.updated,
     user1: mapUserModelToDto(model.user1),
     user2: model.user2 ? mapUserModelToDto(model.user2) : undefined,
-    suggestedCat1: model.suggestedCat1
-      ? mapCategoryModelToDto(model.suggestedCat1)
-      : undefined,
-    suggestedCat2: model.suggestedCat2
-      ? mapCategoryModelToDto(model.suggestedCat2)
-      : undefined,
-    suggestedCat3: model.suggestedCat3
-      ? mapCategoryModelToDto(model.suggestedCat3)
-      : undefined,
-    categories: model.categories
-      ? model.categories.map((c) => mapCategoryModelToDto(c.category))
-      : undefined,
+    suggestedCat1: model.suggestedCat1 ? mapCategoryModelToDto(model.suggestedCat1) : undefined,
+    suggestedCat2: model.suggestedCat2 ? mapCategoryModelToDto(model.suggestedCat2) : undefined,
+    suggestedCat3: model.suggestedCat3 ? mapCategoryModelToDto(model.suggestedCat3) : undefined,
+    categories: model.categories ? model.categories.map((c) => mapCategoryModelToDto(c.category)) : undefined,
     questions: model.questions
       ? model.questions.map((q) => {
           return {

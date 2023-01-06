@@ -4,8 +4,8 @@ import { RegisterAnswerRequest } from './registerAnswer.request';
 
 export class ListOfRegisterAnswersRequest {
   @ApiProperty({
-    isArray:true,
-    type:RegisterAnswerRequest
+    isArray: true,
+    type: RegisterAnswerRequest,
   })
   @IsNotEmpty()
   answers: RegisterAnswerRequest[];

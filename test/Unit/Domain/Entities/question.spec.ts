@@ -21,4 +21,9 @@ describe('Question Entity', () => {
   test('invalid author checking', () => {
     expect(question.isAuthor(2)).toBe(false);
   });
+
+  test('Confirm', () => {
+    question.confirm();
+    expect(question.isConfirmed).toBe(true);
+  });
 });

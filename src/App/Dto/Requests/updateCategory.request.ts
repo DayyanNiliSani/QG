@@ -1,3 +1,3 @@
-import { CreateCategoryRequest } from "./createCategory.request";
+import { CreateCategoryRequest } from './createCategory.request';
 
-export class UpdateCategoryRequest extends CreateCategoryRequest{}
+export class UpdateCategoryRequest extends CreateCategoryRequest {}

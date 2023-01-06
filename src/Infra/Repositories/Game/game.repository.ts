@@ -65,7 +65,7 @@ export class GameRepo {
       ],
     });
   }
-
+  
   public async saveChanges(game: Game): Promise<Game> {
     game.updated = Date.now();
     return await this.repo.save(game);

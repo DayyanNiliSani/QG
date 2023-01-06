@@ -2,6 +2,7 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
+  "resetMocks":true,
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },

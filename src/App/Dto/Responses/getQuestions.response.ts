@@ -1,5 +1,5 @@
-import { ReadQuestionDto } from "src/Infra/Repositories/Question/question.dto";
+import { ReadQuestionDto } from 'src/Infra/Repositories/Question/question.dto';
 
-export interface GetQuestionResponse{
-    questions: ReadQuestionDto[]
+export interface GetQuestionResponse {
+  questions: ReadQuestionDto[];
 }

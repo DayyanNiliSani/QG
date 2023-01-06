@@ -24,20 +24,11 @@ export class RabbitMQClient {
       durable: false,
     });
 
-    this.channel.sendToQueue(
-      userId.toString(),
-      Buffer.from(JSON.stringify(msg)),
-    );
+    this.channel.sendToQueue(userId.toString(), Buffer.from(JSON.stringify(msg)));
   }
 
-  public async createUserForBroker(
-    userId: number,
-    username: string,
-    password: string,
-  ) {
+  public async createUserForBroker(userId: number, username: string, password: string) {
     await this.exec(`rabbitmqctl add_user '${username}' '${password}'`);
-    await this.exec(
-      `rabbitmqctl set_permissions -p "/" '${username}' "" "" "${userId}"`,
-    );
+    await this.exec(`rabbitmqctl set_permissions -p "/" '${username}' "" "" "${userId}"`);
   }
 }

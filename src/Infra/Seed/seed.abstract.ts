@@ -1,3 +1,3 @@
-export abstract class Seed{
-    abstract seed()
+export abstract class Seed {
+  abstract seed();
 }

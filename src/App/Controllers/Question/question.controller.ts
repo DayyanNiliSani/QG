@@ -16,53 +16,63 @@ export class QuestionController {
   constructor(private questionService: QuestionService) {}
 
   @Get('/')
-  async get(@Query('skip') skip: number, @Query('take') take: number):Promise<GetQuestionsResponse> {
-    const result = await this.questionService.getAll(skip, take)
+  async get(@Query('skip') skip: number, @Query('take') take: number): Promise<GetQuestionsResponse> {
+    const result = await this.questionService.getAll(skip, take);
     return {
-        questions: result
-    } 
+      questions: result,
+    };
   }
 
   @Get('/category/:categoryId')
-  async getByCategoryId(@Param('categoryId') categoryId: number,
-    @Query('skip') skip: number, @Query('take') take: number):Promise<GetQuestionsResponse>{
-        const result = await this.questionService.getCategoryQuestions(categoryId, skip, take)
-        return {
-            questions: result
-        }
-    }
+  async getByCategoryId(
+    @Param('categoryId') categoryId: number,
+    @Query('skip') skip: number,
+    @Query('take') take: number,
+  ): Promise<GetQuestionsResponse> {
+    const result = await this.questionService.getCategoryQuestions(categoryId, skip, take);
+    return {
+      questions: result,
+    };
+  }
 
   @Get('/user/')
-  async getByUserId(@UserInfo() userInfo:UserInfoDto,
-    @Query('skip') skip: number, @Query('take') take: number):Promise<GetQuestionsResponse>{
-        const result = await this.questionService.getUserQuestions(userInfo.id, skip, take)
-        return {
-            questions: result
-        }
-    }
+  async getByUserId(
+    @UserInfo() userInfo: UserInfoDto,
+    @Query('skip') skip: number,
+    @Query('take') take: number,
+  ): Promise<GetQuestionsResponse> {
+    const result = await this.questionService.getUserQuestions(userInfo.id, skip, take);
+    return {
+      questions: result,
+    };
+  }
 
   @Post('/')
   @HttpCode(201)
-  async create(@Body() body: CreateQuestionRequest, @UserInfo() userInfo: UserInfoDto ):Promise<ReadQuestionDto>{
-    body.authorId = userInfo.id
-    return await this.questionService.create(body)
+  async create(@Body() body: CreateQuestionRequest, @UserInfo() userInfo: UserInfoDto): Promise<ReadQuestionDto> {
+    body.authorId = userInfo.id;
+    return await this.questionService.create(body);
   }
 
   @Put('/:id')
-  async update(@Param('id') id: number ,@Body() body: UpdateQuestionRequest, @UserInfo() userInfo:UserInfoDto):Promise<ReadQuestionDto>{
-    body.authorId = userInfo.id
-    return await this.questionService.update(id, body)
+  async update(
+    @Param('id') id: number,
+    @Body() body: UpdateQuestionRequest,
+    @UserInfo() userInfo: UserInfoDto,
+  ): Promise<ReadQuestionDto> {
+    body.authorId = userInfo.id;
+    return await this.questionService.update(id, body);
   }
 
   @Patch('/confirm/:id')
   @UseGuards(IsAdmin)
-  async confirm(@Param('id') id:number):Promise<ReadQuestionDto>{
-    return await this.questionService.confirmQuestion(id)
+  async confirm(@Param('id') id: number): Promise<ReadQuestionDto> {
+    return await this.questionService.confirmQuestion(id);
   }
 
-  @Delete("/:id")
+  @Delete('/:id')
   @HttpCode(204)
-  async delete(@Param('id') id:number, @UserInfo() userInfo: UserInfoDto):Promise<void>{
-    return await this.questionService.delete(id, userInfo.id, userInfo.isAdmin)
+  async delete(@Param('id') id: number, @UserInfo() userInfo: UserInfoDto): Promise<void> {
+    return await this.questionService.delete(id, userInfo.id, userInfo.isAdmin);
   }
 }

@@ -19,10 +19,7 @@ export class GameController {
   }
 
   @Get('/:gameId/categories')
-  async getCategories(
-    @Param('gameId') gameId: number,
-    @UserInfo() userInfo: UserInfoDto,
-  ): Promise<ReadCategoryDto[]> {
+  async getCategories(@Param('gameId') gameId: number, @UserInfo() userInfo: UserInfoDto): Promise<ReadCategoryDto[]> {
     return await this.gameService.getRandomCategories(userInfo.id, gameId);
   }
 
@@ -32,11 +29,7 @@ export class GameController {
     @Param('categoryId') categoryId: number,
     @UserInfo() userInfo: UserInfoDto,
   ): Promise<ReadQuestionDto[]> {
-    return await this.gameService.getRandomQuestionForSelectedCategory(
-      userInfo.id,
-      gameId,
-      categoryId,
-    );
+    return await this.gameService.getRandomQuestionForSelectedCategory(userInfo.id, gameId, categoryId);
   }
 
   @Post('/:gameId/answers')
@@ -45,18 +38,11 @@ export class GameController {
     @UserInfo() userInfo: UserInfoDto,
     @Body() body: ListOfRegisterAnswersRequest,
   ): Promise<ReadGameDto> {
-    return await this.gameService.registerUserAnswers(
-      userInfo.id,
-      gameId,
-      body.answers,
-    );
+    return await this.gameService.registerUserAnswers(userInfo.id, gameId, body.answers);
   }
 
   @Get('/:gameId/')
-  async getGame(
-    @Param('gameId') gameId: number,
-    @UserInfo() userInfo: UserInfoDto,
-  ): Promise<ReadGameDto> {
+  async getGame(@Param('gameId') gameId: number, @UserInfo() userInfo: UserInfoDto): Promise<ReadGameDto> {
     return await this.gameService.getGame(userInfo.id, gameId);
   }
 

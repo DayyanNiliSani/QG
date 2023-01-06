@@ -10,27 +10,27 @@ import { UserService } from 'src/Service/Services/user.service';
 @Controller('/user/')
 @ApiBearerAuth()
 export class UserController {
-  constructor(private userService:UserService) {}
+  constructor(private userService: UserService) {}
 
   @Post('')
   @HttpCode(201)
-  async create(@Body() body:CreateUserRequest):Promise<ReadUserDto>{
-    return await this.userService.create(body)
+  async create(@Body() body: CreateUserRequest): Promise<ReadUserDto> {
+    return await this.userService.create(body);
   }
 
   @Get('')
-  async get(@UserInfo() userInfo: UserInfoDto):Promise<ReadUserDto> {
-    return await this.userService.find(userInfo.id)
+  async get(@UserInfo() userInfo: UserInfoDto): Promise<ReadUserDto> {
+    return await this.userService.find(userInfo.id);
   }
 
   @Delete()
   @HttpCode(204)
-  async delete(@UserInfo() userInfo: UserInfoDto):Promise<void>{
-    return await this.userService.delete(userInfo.id)
+  async delete(@UserInfo() userInfo: UserInfoDto): Promise<void> {
+    return await this.userService.delete(userInfo.id);
   }
 
   @Put()
-  async update(@UserInfo() userInfo: UserInfoDto, @Body() body: UpdateUserRequest):Promise<ReadUserDto>{
-    return await this.userService.update(userInfo.id, body)
+  async update(@UserInfo() userInfo: UserInfoDto, @Body() body: UpdateUserRequest): Promise<ReadUserDto> {
+    return await this.userService.update(userInfo.id, body);
   }
 }

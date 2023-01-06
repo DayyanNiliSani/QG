@@ -1,13 +1,13 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { IsEmail, IsNotEmpty} from "class-validator"
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
-export class UpdateUserRequest{
-    @ApiProperty()
-    @IsNotEmpty()
-    username:string
+export class UpdateUserRequest {
+  @ApiProperty()
+  @IsNotEmpty()
+  username: string;
 
-    @ApiProperty()
-    @IsEmail()
-    @IsNotEmpty()
-    email:string
+  @ApiProperty()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 }

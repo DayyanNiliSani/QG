@@ -1,0 +1,21 @@
+{
+    "db":{
+        "type":"postgres",
+        "host":"localhost",
+        "port":5432,
+        "username":"pgadmin",
+        "password":"pgadmin",
+        "database":"QG"
+    },
+    "jwt":{
+        "password":"somePasswordForJWT",
+        "expiresIn":"30d"
+    },
+    "redis":{
+        "host":"localhost",
+        "port":6379
+    },
+    "rabbitMQ":{
+        "host":"amqp://localhost"
+    }
+}

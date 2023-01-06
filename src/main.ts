@@ -1,9 +1,6 @@
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { TypeOrmExceptionFilter } from './App/Middlewares/typeOrmError.middleware';
@@ -14,13 +11,9 @@ import helmet from '@fastify/helmet';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const apiApp = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter(),
-    {
-      cors: true,
-    },
-  );
+  const apiApp = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
+    cors: true,
+  });
 
   await apiApp.register(fastifyCsrf);
   await apiApp.register(helmet);
