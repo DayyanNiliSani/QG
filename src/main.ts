@@ -1,4 +1,4 @@
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
@@ -8,7 +8,11 @@ import { CustomErrorExceptionFilter } from './App/Middlewares/customError.middle
 import { Seeds } from './Infra/Seed';
 import fastifyCsrf from '@fastify/csrf-protection';
 import helmet from '@fastify/helmet';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import * as config from 'config';
+
+const appConfig = config.get('api') as {
+  port: string;
+};
 
 async function bootstrap() {
   const apiApp = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
@@ -42,8 +46,8 @@ async function bootstrap() {
   apiApp.useGlobalFilters(new TypeOrmExceptionFilter());
   apiApp.useGlobalFilters(new CustomErrorExceptionFilter());
 
-  await apiApp.listen(3000);
-
+  await apiApp.listen(appConfig.port);
+  Logger.log(`Server is listening on port ${appConfig.port}`);
   for (let seed of Seeds) {
     try {
       await apiApp.get(seed).seed();

@@ -1,0 +1,24 @@
+{
+    "api":{
+        "port":8080
+    },
+    "db":{
+        "type":"postgres",
+        "host":"postgres",
+        "port":8081,
+        "username":"postgres_qg",
+        "password":"postgres_qg",
+        "database":"QG"
+    },
+    "jwt":{
+        "password":"somePasswordForJWTForProduction",
+        "expiresIn":"30d"
+    },
+    "redis":{
+        "host":"redis",
+        "port":6379
+    },
+    "rabbitMQ":{
+        "host":"amqp://rabbitmq"
+    }
+}

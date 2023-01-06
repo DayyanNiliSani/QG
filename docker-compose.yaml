@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  ngx:
+    image: 'nginx:alpine'
+    container_name: 'qg-ngx'
+    restart: always
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - qg
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf
+
+  postgres:
+    image: 'postgres:latest'
+    container_name: 'postgres-qg'
+    environment:
+      POSTGRES_PASSWORD: 'postgres_qg'
+      POSTGRES_USER: 'postgres_qg'
+      POSTGRES_DB: 'QG'
+    volumes:
+      - /mnt/db:/var/lib/postgresql/data
+    restart: always
+    command: '-p 8081'
+    ports:
+      - '8081:8081'
+
+  redis:
+    image: 'bitnami/redis:latest'
+    container_name: 'qg-redis'
+    environment:
+      ALLOW_EMPTY_PASSWORD: 'yes'
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    ports:
+      - '6379:6379'
+
+  rabbitmq:
+    restart: always
+    image: 'rabbitmq:3-management'
+    container_name: 'qg-rabbitmq'
+    ports:
+      - 5672:8083
+      - 15672:8084
+
+  qg:
+    image: qg
+    container_name: qg
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    environment:
+      NODE_ENV: production
+    entrypoint: ['npm', 'run', 'start']
+    restart: always
