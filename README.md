@@ -2,7 +2,7 @@
 
 QG is a feature rich quiz game written in Typescript. the main idea of creating this project is implementing an infrastructure for up and running system with some of the latest technologies in Typescript.
 
-## Summary
+## Overall
 
 First I will try to introduce the whole concept of the project. As I've stated before this project is about a 2 player quiz game. People can create accounts and start requesting to play with other people. For each turn one of the players will be asked to select one category from categories suggested to him and after the selection is done, he will receive 3 questions that should be answered in less than 90 seconds. the same questions will be sent to the other player after the first player turn is over and after that the second player should decide what categories should the questions be of. the users can even upload the questions if they find some questions interesting but an admin should confirm whether the mentioned questions is suitable for the game or not.
 
