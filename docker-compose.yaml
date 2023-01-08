@@ -62,5 +62,5 @@ services:
       - rabbitmq
     environment:
       NODE_ENV: production
-    entrypoint: ['npm', 'run', 'start']
+    entrypoint: ['npm', 'run', 'cluster']
     restart: always
