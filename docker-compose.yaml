@@ -38,16 +38,17 @@ services:
       resources:
         limits:
           memory: 500M
-    ports:
-      - '6379:6379'
 
   rabbitmq:
     restart: always
     image: 'rabbitmq:3-management'
     container_name: 'qg-rabbitmq'
+    environment:
+      - 'RABBITMQ_DEFAULT_USER=rabbitMQAdmin'
+      - 'RABBITMQ_DEFAULT_PASS=rabbitMQAdmin'
     ports:
-      - 5672:8083
-      - 15672:8084
+      - 5672:5672
+      - 15672:15672
 
   qg:
     image: qg

@@ -19,6 +19,10 @@
         "port":6379
     },
     "rabbitMQ":{
-        "host":"amqp://rabbitmq"
+        "host":"rabbitmq",
+        "port":5672,
+        "apiPort":15672,
+        "username":"rabbitMQAdmin",
+        "password":"rabbitMQAdmin"
     }
 }

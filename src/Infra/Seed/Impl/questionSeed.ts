@@ -20,7 +20,6 @@ export class QuestionSeed extends Seed {
       Logger.warn("couldn't seed the question");
       return;
     }
-
     //Sport Questions
     {
       await this.questionRepo.save({

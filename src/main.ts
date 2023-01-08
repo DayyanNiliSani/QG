@@ -46,7 +46,7 @@ async function bootstrap() {
   apiApp.useGlobalFilters(new TypeOrmExceptionFilter());
   apiApp.useGlobalFilters(new CustomErrorExceptionFilter());
 
-  await apiApp.listen(appConfig.port);
+  await apiApp.listen(appConfig.port, '0.0.0.0');
   Logger.log(`Server is listening on port ${appConfig.port}`);
   for (let seed of Seeds) {
     try {
