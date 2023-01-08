@@ -25,7 +25,8 @@ In this project I tried to stick to Clean Architecture and DDD principles. the s
 
 In this part I will try to summarize some of the works I've done for this project. Many of the systems that are run across the world be ran in a cluster mode for maximum output and I've decided that maybe It would be a good idea for this project. for this purpose I've used PM2 Package which could run multiple instances of your application, check their status and would balance the load on them. everything that this package do is great, but in some conditions it might cause race condition in this application which wouldn't be the case if the application was not run in a cluster environment due to the single threaded event loop of NodeJS. Now about the scenario that this race condition would happen. I've decided to use a queue for store the games which there haven't been any other players to join. if a user wants to play a game first i will check the queue to see wether there is any games in this queue which he is not a part of or not. if there was he will join the mentioned game, otherwise a new game will be created for him. now accessing this queue in a cluster environment would create a race condition and the solution to this problem would be to use a distributed lock which I decided to go with RedLock. one of the reasons that i decided to go with this options was because I was already using Redis for caching and for the queue that I've previously talked about and it offered all I wanted so no extra complexity was added to the project.
 
-##Installation
+## Installation
+
 I've written the dockerfile and docker-compose file for these project so all you have to do to run this project in your own system is run 2 commands
 
 ```sh
